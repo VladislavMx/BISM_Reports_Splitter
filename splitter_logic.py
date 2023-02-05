@@ -1,0 +1,58 @@
+import pdfplumber
+from PyPDF2 import PdfFileWriter, PdfFileReader
+from fpdf import FPDF
+from pdfrw import PdfReader, PdfWriter
+
+def file_name(i, main_patch):
+    with pdfplumber.open(main_patch) as pdf:
+        student_name = ""
+        date = ""
+
+        previous_word = ""
+        key = 0
+
+        page = pdf.pages[i]
+        text = page.extract_text()
+
+        splited_text = text.split()
+
+        for word in splited_text:
+            if previous_word == "NAME:":
+                key = 1
+
+            if word == "ATTENDANCE:":
+                break
+
+            if key == 1:
+                student_name += word+" "
+
+            if key == 0 and word != "NAME:":
+                date += word+" "
+
+            previous_word = word
+
+        file_final_name = student_name + date
+        return(file_final_name)
+
+def separate_main_file(report_name, page_number, output_patch, main_path):
+    output_file = r"{0}/{1}.pdf".format(output_patch,report_name)
+    reader_input = PdfReader(main_path)
+    writer_output = PdfWriter()
+
+    for current_page in range(page_number, page_number+2):
+        writer_output.addpage(reader_input.pages[current_page])
+
+    writer_output.write(output_file)
+
+def separate_all(main_patch, output_path, list_w):
+    i = 0
+    pdf_obj = PdfReader(main_patch)
+    total_pages = len(pdf_obj.pages)
+
+    while i <= total_pages - 2:
+        name = file_name(i, main_patch)
+        separate_main_file(name, i, output_path, main_patch)
+        i += 2
+        list_w.addItem("created - "+name)
+
+    list_w.addItem("Process was sucсessfully finished")
