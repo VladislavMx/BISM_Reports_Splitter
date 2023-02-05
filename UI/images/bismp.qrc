@@ -1,0 +1,6 @@
+<RCC>
+  <qresource prefix="newPrefix">
+    <file>bism.png</file>
+    <file>bism.png</file>
+  </qresource>
+</RCC>
