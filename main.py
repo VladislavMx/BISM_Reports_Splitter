@@ -1,7 +1,7 @@
 import sys
-from PyQt5.QtWidgets import *
+from PyQt5.QtWidgets import QMainWindow, QApplication
 from bism_app import Ui_ReportSplitter
-from splitter_logic import *
+
 
 class Window(QMainWindow, Ui_ReportSplitter):
 

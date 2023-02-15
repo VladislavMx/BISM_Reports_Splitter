@@ -1,6 +1,4 @@
 import pdfplumber
-from PyPDF2 import PdfFileWriter, PdfFileReader
-from fpdf import FPDF
 from pdfrw import PdfReader, PdfWriter
 
 def file_name(i, main_patch):
@@ -17,6 +15,7 @@ def file_name(i, main_patch):
         splited_text = text.split()
 
         for word in splited_text:
+            print(previous_word)
             if previous_word == "NAME:":
                 key = 1
 
@@ -26,12 +25,17 @@ def file_name(i, main_patch):
             if key == 1:
                 student_name += word+" "
 
-            if key == 0 and word != "NAME:":
-                date += word+" "
-
+            if word == "YEAR":
+                date += "Y"
+            elif key == 0 and word != "NAME:":
+                date += word[0] + word[1:].lower()+" "
             previous_word = word
 
+
         file_final_name = student_name + date
+        print("student name - "+student_name)
+        print("date - "+date)
+        print(file_final_name,"\n\n\n\n")
         return(file_final_name)
 
 def separate_main_file(report_name, page_number, output_patch, main_path):
