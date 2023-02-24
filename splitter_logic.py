@@ -60,3 +60,4 @@ def separate_all(main_patch, output_path, list_w):
         list_w.addItem("created - "+name)
 
     list_w.addItem("Process was sucсessfully finished")
+    #1234
