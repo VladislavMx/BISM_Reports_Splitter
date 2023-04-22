@@ -1,11 +1,11 @@
 import pdfplumber
 from pdfrw import PdfReader, PdfWriter
 
-def file_name(i, main_patch):
+def file_name(i, main_patch, mode):
+    print("тута крч тип - "+mode)
     with pdfplumber.open(main_patch) as pdf:
         student_name = ""
         date = ""
-
         previous_word = ""
         key = 0
 
@@ -13,23 +13,51 @@ def file_name(i, main_patch):
         text = page.extract_text()
 
         splited_text = text.split()
+        if mode == "report":
+            for word in splited_text:
+                print(previous_word)
+                if previous_word == "NAME:":
+                    key = 1
 
-        for word in splited_text:
-            print(previous_word)
-            if previous_word == "NAME:":
-                key = 1
+                if word == "ATTENDANCE:":
+                    break
 
-            if word == "ATTENDANCE:":
-                break
+                if key == 1:
+                    student_name += word+" "
 
-            if key == 1:
-                student_name += word+" "
+                if word == "YEAR":
+                    date += "Y"
+                elif key == 0 and word != "NAME:":
+                    date += word[0] + word[1:].lower()+" "
+                previous_word = word
 
-            if word == "YEAR":
-                date += "Y"
-            elif key == 0 and word != "NAME:":
-                date += word[0] + word[1:].lower()+" "
-            previous_word = word
+        if mode == "mok":
+            print("Оно сюда пришло")
+            for word in splited_text:
+                print(previous_word)
+                if previous_word == "Name:":
+                    key = 1
+
+                if word == "Below":
+                    break
+
+                if key == 1:
+                    student_name += word + " "
+
+                previous_word = word
+
+            for word in splited_text:
+                print(previous_word)
+                if previous_word == "school3@bismoscow.com":
+                    key = 1
+
+                if word == "Name:":
+                    break
+
+                if key == 1:
+                    date += word + " "
+
+                previous_word = word
 
 
         file_final_name = student_name + date
@@ -48,16 +76,17 @@ def separate_main_file(report_name, page_number, output_patch, main_path):
 
     writer_output.write(output_file)
 
-def separate_all(main_patch, output_path, list_w):
+def separate_all(main_patch, output_path, list_w, mode):
+
     i = 0
     pdf_obj = PdfReader(main_patch)
     total_pages = len(pdf_obj.pages)
 
     while i <= total_pages - 2:
-        name = file_name(i, main_patch)
+        name = file_name(i, main_patch, mode)
         separate_main_file(name, i, output_path, main_patch)
         i += 2
         list_w.addItem("created - "+name)
 
     list_w.addItem("Process was sucсessfully finished")
-    #1234
+
